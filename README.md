@@ -2,7 +2,7 @@
 
 I am the teacher/trainer of MyWorld (and you are the teacher/trainer of your world)...
 
-Server/client based RPG, where A.I. related integrations may involve usage of trained ML models as well as external services (such as Google Vision, etc) in which, as a solo player, you record your actions you'd want to teach, and M.L. will remember the situations (actions taken based on surroundings, environments, times, stats, etc), so that NPCs surrounding you will take similar actions when similar situations are encountered.  More you teach, better the NPC will mock and adapt.
+Server/client based RTS-RPG, where A.I. related integrations may involve usage of trained ML models as well as external services (such as Google Vision, etc) in which, as a solo player, you record your actions you'd want to teach, and M.L. will remember the situations (actions taken based on surroundings, environments, times, stats, etc), so that NPCs surrounding you will take similar actions when similar situations are encountered.  More you teach, better the NPC will mock and adapt.
 
 ## Infrastructure
 
@@ -26,7 +26,11 @@ Server/client based RPG, where A.I. related integrations may involve usage of tr
 
 ## Gameplay
 
-TBD
+The more you train, the more the NPCs will bias towards your actions.  In a tutorial, you're forced to record the basic "common sense" actions, so that you can observed the NPCs to take same actions as you've recorded.  Of course, what you record could differ between each players, mainly because common sense to one person may not be "common" to another.  Some may take the efficient quickest approach, some may take longer easy-going approach, as long as you get the goals accomplished, that's all it matters.
+
+In terms of reinforced learning, what it learns is what you've recorded, which it assumes is always the correct and expected goals, hence ML is rewarded as long as it gets to the final goal regardless of how long it took, preferably within [[T1..TN]] turns (if it takes longer tan TN turns, the reward will be gradually reduced, and if it accomplished the goals quicker than TN, the reward will be gradually increased).  I.e. on time by TN turns, then +0.45 points, earlier than TN turns is +0.5 points, and later than TN is 0.0 points.  And then, on top of that, we always add +0.5 as long as goals are accomplished, so as long as you get 0.5 or greater, you've accomplished the goals.  The separtions of accomplishing the goals and bonus for finishing on or earlier than expected turns, is because we want to reward as long as goals are reached.  For example what you have taught (recorded) was riding a bicycle on a flat terrain, and it took N turns to travel X distance; but what the A.I. was trying to accomplish was on a icy-up-hill in which it took significantly longer turns to travel the same distance, yet A.I. was rewarded close to nothing would be unfair, hence as long as A.I. gets rewarded 0.5 or greater, it's a success.  Perhaps, if there are ways to measure how close the A.I. got to the goals before it died (HP = 0), then we can reward less than 0.5 points, but that's still under considerations since there's no sure ways to say "that was close to accomplishing the goals".
+
+TBD - I personally like city-builder and/or factory kind of RTS and Tower Defense, but that's still under considerations...
 
 ## Development
 
@@ -40,7 +44,7 @@ As much as possible, most logics are written in the libmyworld library, in which
 
 For the sake of having a word to describe the goals, I wull use the term "Action" to represet any actions, tasks, or events that was emitted by an entity such as player, NPC, enemies/monsters, objects (vehicles, horse, pot on a fireplace), etc.
 
-"Actions" should be 100% deterministic so that a time-window of recorded from [[T0...TN]] can be replayed for later training.
+"Actions" should be 100% deterministic so that a time-window of recorded from [[T0...TN]] can be replayed for later training (that will be total of N+1 actions).
 
 As a starter, I am thinking to just use RNN (Recurrent Neural Network) for the A.I.  This is because it is relatively simple to implement, and it is also relatively easy to train.  I am also thinking to use TensorFlow for the implementation (over Torch), as it is relatively easy to use, and it is also relatively easy to train in Rust.  It's been suggested that I should also consider GNN (Graph Neural networks), or hybrid combination of RNN and GNN, either way, here are my initial thinking/design/goal:
 
@@ -63,7 +67,5 @@ For reinforcement learning, I'd like to be flexible on reward function that refl
 - Short-Term Rewards: Immediate feedback after each action. For example, gaining experience points, picking up items, or losing health.
 - Long-Term Rewards: Evaluate the cumulative effect of actions over a longer period. For example, surviving longer, completing objectives, or helping teammates.
 - Custom Rewards: Define rewards based on specific game mechanics, such as sacrificing HP for team benefit, where the reward considers the overall team success.
-
-
 
 ### Client
